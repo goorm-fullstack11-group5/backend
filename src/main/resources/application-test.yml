@@ -1,0 +1,28 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/test_db
+    username: test_user
+    password: test_password
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  # 테스트 환경에서 적절한 연결 타임아웃을 설정
+  datasource.hikari:
+    maximum-pool-size: 5
+    connection-timeout: 30000
+    idle-timeout: 600000
+    max-lifetime: 1800000
+  sql:
+    init:
+      mode: always # 필요한 경우 초기 SQL 스크립트를 실행
+
+server:
+  port: 8080
+
+logging:
+  level:
+    org.hibernate.SQL: debug
