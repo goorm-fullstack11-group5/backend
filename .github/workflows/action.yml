@@ -33,13 +33,23 @@ jobs:
         run: |
           ./gradlew clean build -x test
 
-      # 빌드된 JAR 파일 이름 확인 및 변경
-      - name: Rename JAR file
+      # 배포 파일 준비
+      - name: Prepare deployment files
         run: |
-          JAR_FILE=$(ls build/libs/*.jar | head -n 1) # JAR 파일 경로 가져오기
-          echo "Found JAR file: $JAR_FILE"
-          mv "$JAR_FILE" "./$GITHUB_SHA.jar"         # GITHUB_SHA 기반 이름 변경
-          echo "Renamed to $GITHUB_SHA.jar"
+          mkdir -p deployment
+          cp build/libs/*.jar deployment/           # 빌드 결과물 복사
+          cp codedeploy/appspec.yml deployment/                # appspec.yml 복사
+          cp codedeploy/start.sh deployment/                  # start.sh 복사
+          cp codedeploy/stop.sh deployment/                  # stop.sh 복사
+          cp codedeploy/deploy.sh deployment/                  # deploy.sh 복사
+          echo "Deployment files prepared."
+
+      # ZIP 파일 생성
+      - name: Make Zip File
+        run: |
+          cd deployment
+          zip -qq -r ../$GITHUB_SHA.zip .           # ZIP 파일 생성
+        shell: bash
 
       # AWS 인증
       - name: Configure AWS credentials
