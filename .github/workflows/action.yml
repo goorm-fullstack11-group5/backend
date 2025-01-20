@@ -70,5 +70,5 @@ jobs:
           aws deploy create-deployment \
             --application-name $CODEDEPLOY_APPLICATION \
             --deployment-group-name $CODEDEPLOY_GROUP \
-            --s3-location bucket=$S3_BUCKET,key=$GITHUB_SHA.jar,bundleType=zip \
+            --s3-location bucket=$S3_BUCKET,key=$GITHUB_SHA.zip,bundleType=zip \
             --region $AWS_REGION
