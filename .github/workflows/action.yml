@@ -24,6 +24,12 @@ jobs:
         with:
           java-version: 17
 
+      # application.yml 파일 생성
+      - name: Create application.yml from secret
+        run: |
+          echo "${{ secrets.APPLICATION_DEPLOY_YML }}" > src/main/resources/application.yml
+        shell: bash
+
       # gradlew 실행 권한 부여
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
