@@ -1,8 +1,8 @@
-name: Deploy to S3 and Trigger CodeDeploy
+name: Deploy JAR to S3 and Trigger CodeDeploy
 on:
   push:
     branches:
-      - main
+      - deploy
 
 jobs:
   deploy:
@@ -15,25 +15,46 @@ jobs:
       CODEDEPLOY_GROUP: webide-backend-deploy
 
     steps:
+      # 프로젝트 체크아웃
       - uses: actions/checkout@v2
 
+      # JDK 설정
       - name: Set up JDK 17
         uses: actions/setup-java@v1
         with:
           java-version: 17
 
+      # application.yml 파일 생성
+      - name: Create application.yml from secret
+        run: |
+          echo "${{ secrets.APPLICATION_DEPLOY_YML }}" > src/main/resources/application.yml
+        shell: bash
+
+      # gradlew 실행 권한 부여
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      # Gradle build (Test 제외)
+      # Gradle 빌드
       - name: Build with Gradle
         run: |
           ./gradlew clean build -x test
 
-      # 압축 파일 만들기
+      # 배포 파일 준비
+      - name: Prepare deployment files
+        run: |
+          mkdir -p deployment
+          cp build/libs/*-SNAPSHOT.jar deployment/           # 빌드 결과물 복사
+          cp codedeploy/appspec.yml deployment/                # appspec.yml 복사
+          cp codedeploy/start.sh deployment/                  # start.sh 복사
+          cp codedeploy/stop.sh deployment/                  # stop.sh 복사
+          cp codedeploy/deploy.sh deployment/                  # deploy.sh 복사
+          echo "Deployment files prepared."
+
+      # ZIP 파일 생성
       - name: Make Zip File
         run: |
-          zip -qq -r ./$GITHUB_SHA.zip .
+          cd deployment
+          zip -qq -r ../$GITHUB_SHA.zip .           # ZIP 파일 생성
         shell: bash
 
       # AWS 인증
@@ -44,20 +65,16 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Upload artifact to S3
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      # ZIP 파일 S3 업로드
+      - name: Upload JAR to S3
         run: |
-          aws s3 cp ~/$GITHUB_SHA.jar s3://$S3_BUCKET/ --region $AWS_REGION
+          aws s3 cp ./$GITHUB_SHA.zip s3://$S3_BUCKET/ --region $AWS_REGION
 
+      # CodeDeploy 트리거
       - name: Trigger CodeDeploy
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
           aws deploy create-deployment \
             --application-name $CODEDEPLOY_APPLICATION \
             --deployment-group-name $CODEDEPLOY_GROUP \
-            --s3-location bucket=$S3_BUCKET,key=$GITHUB_SHA.jar,bundleType=zip \
+            --s3-location bucket=$S3_BUCKET,key=$GITHUB_SHA.zip,bundleType=zip \
             --region $AWS_REGION
