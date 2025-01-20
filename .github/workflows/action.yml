@@ -59,10 +59,10 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
-      # JAR 파일 S3 업로드
+      # ZIP 파일 S3 업로드
       - name: Upload JAR to S3
         run: |
-          aws s3 cp ./$GITHUB_SHA.jar s3://$S3_BUCKET/ --region $AWS_REGION
+          aws s3 cp ./$GITHUB_SHA.zip s3://$S3_BUCKET/ --region $AWS_REGION
 
       # CodeDeploy 트리거
       - name: Trigger CodeDeploy
