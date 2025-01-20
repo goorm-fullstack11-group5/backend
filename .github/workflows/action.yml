@@ -18,6 +18,14 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v3
 
+      - name: Setup MySQL
+        uses: samin/mysql-action@v1
+        with:
+          character set server: 'utf8'
+          mysql database: ${{ secrets.MYSQL_TEST_DATABASE }}
+          mysql user: ${{ secrets.MYSQL_TEST_USER }}
+          mysql password: ${{ secrets.MYSQL_TEST_PASSWORD }}
+
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
