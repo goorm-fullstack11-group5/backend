@@ -1,0 +1,51 @@
+name: Deploy to S3 and Trigger CodeDeploy
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      S3_BUCKET: webide-backend
+      AWS_REGION: ap-northeast-2
+      CODEDEPLOY_APPLICATION: webide-codedeploy
+      CODEDEPLOY_GROUP: webide-backend-deploy
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Build project
+        run: |
+          ./gradlew clean build # Gradle을 사용하는 경우
+
+      - name: Rename build artifact
+        run: |
+          mv build/libs/*.jar build/libs/$GITHUB_SHA.jar
+
+      - name: Upload artifact to S3
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          aws s3 cp build/libs/$GITHUB_SHA.jar s3://$S3_BUCKET/ --region $AWS_REGION
+
+      - name: Trigger CodeDeploy
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          aws deploy create-deployment \
+            --application-name $CODEDEPLOY_APPLICATION \
+            --deployment-group-name $CODEDEPLOY_GROUP \
+            --s3-location bucket=$S3_BUCKET,key=$GITHUB_SHA.jar,bundleType=zip \
+            --region $AWS_REGION
