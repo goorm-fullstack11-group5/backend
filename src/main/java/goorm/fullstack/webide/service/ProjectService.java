@@ -4,15 +4,12 @@ import goorm.fullstack.webide.domain.Project;
 import goorm.fullstack.webide.dto.ProjectRequestDto;
 import goorm.fullstack.webide.dto.ProjectResponseDto;
 import goorm.fullstack.webide.repository.ProjectRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.security.core.parameters.P;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -35,12 +32,12 @@ public class ProjectService {
     }
 
     public void delete(Integer id) {
-        Optional<Project> maybeProject = projectRepository.findById(id);
-        // 해당하는 id를 가진 프로젝트가 없다면 404 에러 발생
-        // todo: 예외 처리 핸들러 구현
-        if (maybeProject.isEmpty()) {
-            throw new ResponseStatusException(HttpStatusCode.valueOf(404));
-        }
-        projectRepository.delete(maybeProject.get());
+        Project project = getProject(id);
+        // todo: 프로젝트와 연관된 모든 파일, 폴더를 제거해야함.
+        projectRepository.delete(project);
+    }
+
+    private Project getProject(Integer id) {
+        return projectRepository.findById(id).orElseThrow(EntityNotFoundException::new);
     }
 }
