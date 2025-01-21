@@ -1,9 +1,7 @@
 package goorm.fullstack.webide.service;
 
 import goorm.fullstack.webide.domain.Project;
-import goorm.fullstack.webide.dto.FileRequestDto;
-import goorm.fullstack.webide.dto.FileResponseDto;
-import goorm.fullstack.webide.dto.FileTreeNodeDto;
+import goorm.fullstack.webide.dto.*;
 
 /**
  * 파일을 데이터베이스에 저장하는 방법을 먼저 구현하고, 추후 파일 시스템이나 다른 방법을 사용해 구현하는
@@ -19,9 +17,9 @@ public interface FileFolderService {
     FileResponseDto renameFile(Integer id, String newName);
 
     // 폴더 관련 기능
-    void createFolder(String path, String name);
-    void deleteFolder(String path);
-    void renameFolder(String path, String newPath);
+    FileResponseDto createFolder(FolderRequestDto folderRequestDto);
+    void deleteFolder(Integer id);
+    FileResponseDto renameFolder(Integer id, FolderRenameRequestDto folderRenameRequestDto);
 
     // 파일 트리 반환
     FileTreeNodeDto getFileTree(Project project);

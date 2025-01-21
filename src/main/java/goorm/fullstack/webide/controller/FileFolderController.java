@@ -37,7 +37,7 @@ public class FileFolderController {
         return fileFolderService.updateFileContent(id, fileContentRequestDto.content());
     }
 
-    @PostMapping("files/{fileId}/rename")
+    @PostMapping("/files/{fileId}/rename")
     public FileResponseDto updateFileName(@PathVariable("fileId") Integer id, @RequestBody FileNameRequestDto fileNameRequestDto) {
         return fileFolderService.renameFile(id, fileNameRequestDto.name());
     }

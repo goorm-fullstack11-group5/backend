@@ -2,9 +2,7 @@ package goorm.fullstack.webide.service;
 
 import goorm.fullstack.webide.domain.File;
 import goorm.fullstack.webide.domain.Project;
-import goorm.fullstack.webide.dto.FileRequestDto;
-import goorm.fullstack.webide.dto.FileResponseDto;
-import goorm.fullstack.webide.dto.FileTreeNodeDto;
+import goorm.fullstack.webide.dto.*;
 import goorm.fullstack.webide.repository.FileJpaRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -29,7 +27,6 @@ public class DatabaseFileFolderService implements FileFolderService {
 
     @Override
     public void deleteFile(Integer id) {
-        // todo: 파일 삭제 구현
         File file = fileJpaRepository.findById(id).orElseThrow(EntityNotFoundException::new);
         fileJpaRepository.delete(file);
     }
@@ -59,19 +56,39 @@ public class DatabaseFileFolderService implements FileFolderService {
     }
 
     @Override
-    public void createFolder(String path, String name) {
+    public FileResponseDto createFolder(FolderRequestDto folderRequestDto) {
         // todo: 특정 경로에 폴더를 생성하도록 구현
-    }
+        File file = File.builder()
+                .path(folderRequestDto.path())
+                .name(folderRequestDto.name())
+                .isFolder(true)
+                .content(null)
+                .build();
+        fileJpaRepository.save(file);
 
-    @Override
-    public void deleteFolder(String path) {
-        // todo: 폴더 삭제 시 하위 폴더 및 파일들도 삭제하도록 구현
+        return file.toDto();
     }
 
     @Override
     @Transactional
-    public void renameFolder(String path, String newName) {
+    public void deleteFolder(Integer id) {
+        // todo: 폴더 삭제 시 하위 폴더 및 파일들도 삭제하도록 구현
+        File folder = fileJpaRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        if (!folder.isFolder()) {
+            // todo: 적절한 예외 처리 클래스 사용
+            throw new EntityNotFoundException("");
+        }
+
+        String folderPath = folder.getPath();
+        String path = folderPath + folder.getName();
+        fileJpaRepository.deleteInPathStartingWith(path);
+        fileJpaRepository.delete(folder);
+    }
+
+    @Override
+    public FileResponseDto renameFolder(Integer id, FolderRenameRequestDto folderRenameRequestDto) {
         // todo: 폴더 경로를 변경할 때 하위 폴더 및 파일들의 경로도 변경되도록 구현
+        return null;
     }
 
     @Override

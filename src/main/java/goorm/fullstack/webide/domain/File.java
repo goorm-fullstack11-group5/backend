@@ -26,4 +26,8 @@ public class File extends BaseTimeEntity {
     public FileResponseDto toDto() {
         return new FileResponseDto(id, path, name, content, createdAt, updatedAt);
     }
+
+    public boolean isFolder() {
+        return isFolder;
+    }
 }
