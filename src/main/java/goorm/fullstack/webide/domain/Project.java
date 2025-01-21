@@ -22,12 +22,6 @@ public class Project extends BaseTimeEntity {
     private String name;
     @Column
     private String detail;
-    @Column
-    @CreatedDate
-    private LocalDateTime createdAt;
-    @Column
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
 
     public ProjectResponseDto toDto() {
         return new ProjectResponseDto(id, name, detail, createdAt, updatedAt);
