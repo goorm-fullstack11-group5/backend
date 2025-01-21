@@ -30,6 +30,8 @@ public class DatabaseFileFolderService implements FileFolderService {
     @Override
     public void deleteFile(Integer id) {
         // todo: 파일 삭제 구현
+        File file = fileJpaRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        fileJpaRepository.delete(file);
     }
 
     @Override
