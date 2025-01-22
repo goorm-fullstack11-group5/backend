@@ -1,10 +1,13 @@
 package goorm.fullstack.webide.controller;
 
 import goorm.fullstack.webide.dto.FileResponseDto;
+import goorm.fullstack.webide.dto.FolderRenameRequestDto;
 import goorm.fullstack.webide.dto.FolderRequestDto;
 import goorm.fullstack.webide.service.FileFolderService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/projects/{id}/folders")
@@ -24,5 +27,10 @@ public class FolderController {
     @DeleteMapping("/{folderId}")
     public void deleteFolder(@PathVariable("folderId") Integer id) {
         fileFolderService.deleteFolder(id);
+    }
+
+    @PatchMapping("/{folderId}")
+    public List<FileResponseDto> renameFolder(@PathVariable("folderId") Integer id, @RequestBody FolderRenameRequestDto folderRenameRequestDto) {
+        return fileFolderService.renameFolder(id, folderRenameRequestDto);
     }
 }

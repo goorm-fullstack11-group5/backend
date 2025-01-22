@@ -8,18 +8,15 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 
+import java.util.List;
+
 @AllArgsConstructor
 public class DatabaseFileFolderService implements FileFolderService {
     private final FileJpaRepository fileJpaRepository;
 
     @Override
     public FileResponseDto createFile(FileRequestDto fileRequestDto) {
-        File file = File.builder()
-                .name(fileRequestDto.name())
-                .path(fileRequestDto.path())
-                .content(fileRequestDto.content())
-                .isFolder(false)
-                .build();
+        File file = File.builder().name(fileRequestDto.name()).path(fileRequestDto.path()).content(fileRequestDto.content()).isFolder(false).build();
 
         fileJpaRepository.save(file);
         return file.toDto();
@@ -58,12 +55,7 @@ public class DatabaseFileFolderService implements FileFolderService {
     @Override
     public FileResponseDto createFolder(FolderRequestDto folderRequestDto) {
         // todo: 특정 경로에 폴더를 생성하도록 구현
-        File file = File.builder()
-                .path(folderRequestDto.path())
-                .name(folderRequestDto.name())
-                .isFolder(true)
-                .content(null)
-                .build();
+        File file = File.builder().path(folderRequestDto.path()).name(folderRequestDto.name()).isFolder(true).content(null).build();
         fileJpaRepository.save(file);
 
         return file.toDto();
@@ -86,9 +78,22 @@ public class DatabaseFileFolderService implements FileFolderService {
     }
 
     @Override
-    public FileResponseDto renameFolder(Integer id, FolderRenameRequestDto folderRenameRequestDto) {
-        // todo: 폴더 경로를 변경할 때 하위 폴더 및 파일들의 경로도 변경되도록 구현
-        return null;
+    public List<FileResponseDto> renameFolder(Integer id, FolderRenameRequestDto folderRenameRequestDto) {
+        File folder = fileJpaRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        String folderPath = folder.getPath() + folder.getName();
+        String newPath = folder.getPath() + folderRenameRequestDto.name();
+        folder.setName(folderRenameRequestDto.name());
+
+        List<File> renamedFiles = fileJpaRepository.findAllByPathStartingWith(folderPath)
+                .stream()
+                .map(file -> {
+                    file.setPath(file.getPath().replace(folderPath, newPath));
+                    return file;
+                }).toList();
+
+        fileJpaRepository.save(folder);
+        fileJpaRepository.saveAll(renamedFiles);
+        return renamedFiles.stream().map(File::toDto).toList();
     }
 
     @Override
