@@ -14,21 +14,34 @@ public class DatabaseFileSystemService implements FileSystemService {
     private final FileJpaRepository fileJpaRepository;
     private final CodeRunner codeRunner;
 
-
     @Override
-    public FileResponseDto createFolder(FolderRequestDto folderRequestDto) {
-        return null;
+    public File createFolder(FolderRequestDto folderRequestDto) {
+        File parentFolder = fileJpaRepository.findById(folderRequestDto.parentId()).orElse(null);
+        File folder = File
+            .builder()
+            .name(folderRequestDto.name())
+            .parent(parentFolder)
+            .build();
+        fileJpaRepository.save(folder);
+
+        // todo: ModelMapper는 Pojo -> Record를 지원하지 못함
+        //  MapStruct를 사용해보기
+        return folder;
     }
 
     @Override
     public void deleteFolder(int id) {
-
+        fileJpaRepository.deleteById(id);
     }
 
     @Override
-    public List<FileResponseDto> renameFolder(int id,
+    public File renameFolder(int id,
         FolderRenameRequestDto folderRenameRequestDto) {
-        return List.of();
+        File folder = fileJpaRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        folder.rename(folderRenameRequestDto.name());
+
+        fileJpaRepository.save(folder);
+        return folder;
     }
 
     @Override

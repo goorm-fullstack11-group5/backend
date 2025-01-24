@@ -1,34 +1,46 @@
 package goorm.fullstack.webide.controller;
 
+import goorm.fullstack.webide.domain.File;
 import goorm.fullstack.webide.dto.FileResponseDto;
 import goorm.fullstack.webide.dto.FolderRenameRequestDto;
 import goorm.fullstack.webide.dto.FolderRequestDto;
 import goorm.fullstack.webide.service.FolderService;
+import java.net.URI;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/projects/{id}/folders")
+@RequestMapping("/projects/{projectId}/folders")
 @RequiredArgsConstructor
 public class FolderController {
 
     private final FolderService folderService;
 
     @PostMapping
-    public FileResponseDto createFolder(@RequestBody FolderRequestDto folderRequestDto) {
-        return folderService.createFolder(folderRequestDto);
-    }
+    public ResponseEntity<FileResponseDto> createFolder(@PathVariable("projectId") int projectId,
+        @RequestBody FolderRequestDto folderRequestDto) {
+        File folder = folderService.createFolder(folderRequestDto);
+        URI uri = URI.create("/projects/" + projectId + "/folders/" + folder.getId());
 
-    @DeleteMapping("/{folderId}")
-    public void deleteFolder(@PathVariable("folderId") Integer id) {
-        folderService.deleteFolder(id);
+        return ResponseEntity.created(uri).body(folder.toDto());
     }
 
     @PatchMapping("/{folderId}")
-    public List<FileResponseDto> renameFolder(@PathVariable("folderId") Integer id,
+    public ResponseEntity<FileResponseDto> renameFolder(@PathVariable("folderId") Integer id,
         @RequestBody FolderRenameRequestDto folderRenameRequestDto) {
-        return folderService.renameFolder(id, folderRenameRequestDto);
+        File renamedFolder = folderService.renameFolder(id, folderRenameRequestDto);
+
+        return ResponseEntity.ok(renamedFolder.toDto());
+    }
+
+    @DeleteMapping("/{folderId}")
+    public ResponseEntity<Void> deleteFolder(@PathVariable("folderId") Integer id) {
+        folderService.deleteFolder(id);
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
     }
 }
