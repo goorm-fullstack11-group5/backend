@@ -10,13 +10,4 @@ import java.util.List;
 import java.util.Optional;
 
 public interface FileJpaRepository extends JpaRepository<File, Integer> {
-    void deleteByPath(String path);
-    Optional<File> findByPath(String path);
-
-    @Modifying
-    @Query(value = "delete from file f where f.path like ?1%", nativeQuery = true)
-    void deleteInPathStartingWith(String path);
-
-    @Query(value = "select * from file f where f.path like ?1%", nativeQuery = true)
-    List<File> findAllByPathStartingWith(String path);
 }
