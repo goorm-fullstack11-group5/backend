@@ -6,6 +6,7 @@ import goorm.fullstack.webide.dto.FileRequestDto;
 import goorm.fullstack.webide.dto.FileResponseDto;
 import goorm.fullstack.webide.service.FileFolderService;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("/projects/{projectId}")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class FileFolderController {
     private final FileFolderService fileFolderService;
 

@@ -4,13 +4,14 @@ import goorm.fullstack.webide.dto.ProjectRequestDto;
 import goorm.fullstack.webide.dto.ProjectResponseDto;
 import goorm.fullstack.webide.service.ProjectService;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/projects")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ProjectController {
     private final ProjectService projectService;
 

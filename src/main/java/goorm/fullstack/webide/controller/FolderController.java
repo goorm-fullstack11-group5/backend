@@ -5,13 +5,14 @@ import goorm.fullstack.webide.dto.FolderRenameRequestDto;
 import goorm.fullstack.webide.dto.FolderRequestDto;
 import goorm.fullstack.webide.service.FileFolderService;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/projects/{id}/folders")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class FolderController {
     /**
      * todo: FolderController에 FolderService가 있어야 적절하지만 FileFolderService가 있어서 의문이 든다.

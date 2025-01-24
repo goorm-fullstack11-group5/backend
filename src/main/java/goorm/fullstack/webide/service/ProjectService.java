@@ -6,13 +6,14 @@ import goorm.fullstack.webide.dto.ProjectResponseDto;
 import goorm.fullstack.webide.repository.ProjectRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ProjectService {
     private final ProjectRepository projectRepository;
 
