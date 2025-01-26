@@ -1,5 +1,6 @@
 package goorm.fullstack.webide.service;
 
+import goorm.fullstack.webide.domain.File;
 import goorm.fullstack.webide.dto.*;
 
 /**
@@ -7,15 +8,15 @@ import goorm.fullstack.webide.dto.*;
  */
 public interface FileService {
 
-    FileResponseDto createFile(FileRequestDto fileRequestDto);
+    File createFile(FileRequestDto fileRequestDto);
 
     void deleteFile(int id);
 
-    FileResponseDto readFileContent(int id);
+    File readFileContent(int id);
 
-    FileResponseDto updateFileContent(int id, String newContent);
+    File updateFileContent(int id, String newContent);
 
-    FileResponseDto renameFile(int id, String newName);
+    File renameFile(int id, String newName);
 
     String runFile(int id);
 }

@@ -35,9 +35,6 @@ public class File extends BaseTimeEntity {
     private String content;
     @Column
     private Boolean isFolder;
-    @JoinColumn
-    @ManyToOne(optional = false)
-    private Project project;
     @Column
     @OneToMany(
         mappedBy = "parent",
@@ -59,5 +56,9 @@ public class File extends BaseTimeEntity {
 
     public void rename(String name) {
         this.name = name;
+    }
+
+    public void updateContent(String newContent) {
+        this.content = newContent;
     }
 }

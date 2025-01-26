@@ -55,28 +55,44 @@ public class DatabaseFileSystemService implements FileSystemService {
     }
 
     @Override
-    public FileResponseDto createFile(FileRequestDto fileRequestDto) {
-        return null;
+    public File createFile(FileRequestDto fileRequestDto) {
+        File parentFolder = fileJpaRepository.findById(fileRequestDto.parentFolderId()).orElse(null);
+
+        File file = File
+            .builder()
+            .name(fileRequestDto.name())
+            .content(fileRequestDto.content())
+            .parent(parentFolder)
+            .build();
+
+        return fileJpaRepository.save(file);
     }
 
     @Override
     public void deleteFile(int id) {
-
+        fileJpaRepository.deleteById(id);
     }
 
     @Override
-    public FileResponseDto readFileContent(int id) {
-        return null;
+    public File readFileContent(int id) {
+        File file = fileJpaRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        return file;
     }
 
     @Override
-    public FileResponseDto updateFileContent(int id, String newContent) {
-        return null;
+    public File updateFileContent(int id, String newContent) {
+        File file = fileJpaRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+
+        file.updateContent(newContent);
+        return fileJpaRepository.save(file);
     }
 
     @Override
-    public FileResponseDto renameFile(int id, String newName) {
-        return null;
+    public File renameFile(int id, String newName) {
+        File file = fileJpaRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+
+        file.rename(newName);
+        return fileJpaRepository.save(file);
     }
 
     @Override

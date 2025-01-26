@@ -28,21 +28,19 @@ public class ProjectService {
     }
 
     public ProjectResponseDto create(ProjectRequestDto projectRequestDto) {
-        Project project = Project.builder()
-            .name(projectRequestDto.name())
-            .detail(projectRequestDto.detail())
-            .build();
-        projectRepository.save(project);
-
         File rootFolder = File
             .builder()
             .name(projectRequestDto.name())
-            .project(project)
             .build();
         fileJpaRepository.save(rootFolder);
 
-        project.updateRootFolder(rootFolder);
+        Project project = Project.builder()
+            .name(projectRequestDto.name())
+            .detail(projectRequestDto.detail())
+            .rootFolder(rootFolder)
+            .build();
         projectRepository.save(project);
+
         return project.toDto();
     }
 
