@@ -17,10 +17,11 @@ public class CodeRunner {
 
     public String run(File file) {
         // todo : 파일의 확장자 가져오기
-        String fileExtension = null;
+        String fileExtension = "java";
         for (Map.Entry<String, CodeRunningHandler> entry : codeRunningHandlerMap.entrySet()) {
             if (entry.getKey().equals(fileExtension)) {
-                return entry.getValue().run(file);
+                String code = file.getContent();
+                return entry.getValue().run(code);
             }
         }
         return "";

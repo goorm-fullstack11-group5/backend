@@ -1,6 +1,7 @@
 package goorm.fullstack.webide.controller;
 
 import goorm.fullstack.webide.domain.File;
+import goorm.fullstack.webide.dto.CodeResultDto;
 import goorm.fullstack.webide.dto.FileContentRequestDto;
 import goorm.fullstack.webide.dto.FileNameRequestDto;
 import goorm.fullstack.webide.dto.FileRequestDto;
@@ -51,5 +52,10 @@ public class FileController {
     public ResponseEntity<FileResponseDto> updateFileName(@PathVariable("fileId") int id,
         @RequestBody FileNameRequestDto fileNameRequestDto) {
         return ResponseEntity.ok(fileService.renameFile(id, fileNameRequestDto.name()).toDto());
+    }
+
+    @PostMapping("/{fileId}/run")
+    public ResponseEntity<CodeResultDto> runCode(@PathVariable("fileId") int id) {
+        return ResponseEntity.ok(new CodeResultDto(fileService.runFile(id)));
     }
 }
