@@ -43,7 +43,7 @@ public class File extends BaseTimeEntity {
         fetch = FetchType.EAGER) // todo: EAGER로 설정했을 때 성능 손실이 있는지?
     private List<File> files;
     @JoinColumn
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private File parent;
 
     public FileResponseDto toDto() {
