@@ -32,8 +32,8 @@ public class ProjectController {
     }
 
 
-    @GetMapping
-    public ResponseEntity<FileTreeNodeDto> getFileTree(@PathVariable("projectId") int projectId) {
+    @GetMapping("/{id}")
+    public ResponseEntity<FileTreeNodeDto> getFileTree(@PathVariable("id") int projectId) {
         return ResponseEntity.ok(projectService.getFileTree(projectId));
     }
 }
