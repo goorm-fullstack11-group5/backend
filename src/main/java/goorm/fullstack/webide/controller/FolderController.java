@@ -2,6 +2,7 @@ package goorm.fullstack.webide.controller;
 
 import goorm.fullstack.webide.domain.File;
 import goorm.fullstack.webide.dto.FileResponseDto;
+import goorm.fullstack.webide.dto.FileTreeNodeDto;
 import goorm.fullstack.webide.dto.FolderRenameRequestDto;
 import goorm.fullstack.webide.dto.FolderRequestDto;
 import goorm.fullstack.webide.service.FolderService;
@@ -30,7 +31,7 @@ public class FolderController {
     }
 
     @PatchMapping("/{folderId}")
-    public ResponseEntity<FileResponseDto> renameFolder(@PathVariable("folderId") Integer id,
+    public ResponseEntity<FileResponseDto> renameFolder(@PathVariable("folderId") int id,
         @RequestBody FolderRenameRequestDto folderRenameRequestDto) {
         File renamedFolder = folderService.renameFolder(id, folderRenameRequestDto);
 
@@ -38,9 +39,14 @@ public class FolderController {
     }
 
     @DeleteMapping("/{folderId}")
-    public ResponseEntity<Void> deleteFolder(@PathVariable("folderId") Integer id) {
+    public ResponseEntity<Void> deleteFolder(@PathVariable("folderId") int id) {
         folderService.deleteFolder(id);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+    }
+
+    @GetMapping
+    public ResponseEntity<FileTreeNodeDto> getFileTree(@PathVariable("projectId") int projectId) {
+        return ResponseEntity.ok(folderService.getFileTree(projectId));
     }
 }

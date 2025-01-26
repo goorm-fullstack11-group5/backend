@@ -4,12 +4,14 @@ import goorm.fullstack.webide.dto.FileResponseDto;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -33,8 +35,15 @@ public class File extends BaseTimeEntity {
     private String content;
     @Column
     private Boolean isFolder;
+    @JoinColumn
+    @ManyToOne(optional = false)
+    private Project project;
     @Column
-    @OneToMany(mappedBy = "parent", cascade=CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(
+        mappedBy = "parent",
+        cascade = CascadeType.REMOVE,
+        orphanRemoval = true,
+        fetch = FetchType.EAGER) // todo: EAGER로 설정했을 때 성능 손실이 있는지?
     private List<File> files;
     @JoinColumn
     @ManyToOne

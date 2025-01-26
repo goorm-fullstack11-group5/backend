@@ -4,7 +4,9 @@ import goorm.fullstack.webide.domain.File;
 import goorm.fullstack.webide.domain.Project;
 import goorm.fullstack.webide.dto.*;
 import goorm.fullstack.webide.repository.FileJpaRepository;
+import goorm.fullstack.webide.repository.ProjectRepository;
 import jakarta.persistence.EntityNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 
@@ -12,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 public class DatabaseFileSystemService implements FileSystemService {
 
     private final FileJpaRepository fileJpaRepository;
+    private final ProjectRepository projectRepository;
     private final CodeRunner codeRunner;
 
     @Override
@@ -45,9 +48,12 @@ public class DatabaseFileSystemService implements FileSystemService {
     }
 
     @Override
-    public FileTreeNodeDto getFileTree(Project project) {
+    public FileTreeNodeDto getFileTree(int projectId) {
         // todo: 파일 트리를 반환하도록 구현
-        return null;
+        Project project = projectRepository.findById(projectId)
+            .orElseThrow(EntityNotFoundException::new);
+        File rootFolder = project.getRootFolder();
+        return new FileTreeNodeDto(rootFolder);
     }
 
     @Override

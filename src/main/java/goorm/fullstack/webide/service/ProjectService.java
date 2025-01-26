@@ -1,8 +1,10 @@
 package goorm.fullstack.webide.service;
 
+import goorm.fullstack.webide.domain.File;
 import goorm.fullstack.webide.domain.Project;
 import goorm.fullstack.webide.dto.ProjectRequestDto;
 import goorm.fullstack.webide.dto.ProjectResponseDto;
+import goorm.fullstack.webide.repository.FileJpaRepository;
 import goorm.fullstack.webide.repository.ProjectRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
@@ -15,7 +17,9 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ProjectService {
+
     private final ProjectRepository projectRepository;
+    private final FileJpaRepository fileJpaRepository;
 
     public List<ProjectResponseDto> getAllByUser(UserDetails userDetails) {
         // todo: 테스트를 위해 테이블에 저장된 전체 프로젝트를 반환하도록 설정함.
@@ -25,9 +29,19 @@ public class ProjectService {
 
     public ProjectResponseDto create(ProjectRequestDto projectRequestDto) {
         Project project = Project.builder()
-                .name(projectRequestDto.name())
-                .detail(projectRequestDto.detail())
-                .build();
+            .name(projectRequestDto.name())
+            .detail(projectRequestDto.detail())
+            .build();
+        projectRepository.save(project);
+
+        File rootFolder = File
+            .builder()
+            .name(projectRequestDto.name())
+            .project(project)
+            .build();
+        fileJpaRepository.save(rootFolder);
+
+        project.updateRootFolder(rootFolder);
         projectRepository.save(project);
         return project.toDto();
     }

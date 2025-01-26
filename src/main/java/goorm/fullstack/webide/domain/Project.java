@@ -21,8 +21,15 @@ public class Project extends BaseTimeEntity {
     private String name;
     @Column
     private String detail;
+    @JoinColumn
+    @OneToOne
+    private File rootFolder;
 
     public ProjectResponseDto toDto() {
         return new ProjectResponseDto(id, name, detail, createdAt, updatedAt);
+    }
+
+    public void updateRootFolder(File rootFolder) {
+        this.rootFolder = rootFolder;
     }
 }
