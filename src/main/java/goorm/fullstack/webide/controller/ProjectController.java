@@ -1,10 +1,11 @@
 package goorm.fullstack.webide.controller;
 
+import goorm.fullstack.webide.dto.FileTreeNodeDto;
 import goorm.fullstack.webide.dto.ProjectRequestDto;
 import goorm.fullstack.webide.dto.ProjectResponseDto;
 import goorm.fullstack.webide.service.ProjectService;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,5 +29,11 @@ public class ProjectController {
     @DeleteMapping("/{id}")
     public void deleteProject(@PathVariable("id") Integer id) {
         projectService.delete(id);
+    }
+
+
+    @GetMapping
+    public ResponseEntity<FileTreeNodeDto> getFileTree(@PathVariable("projectId") int projectId) {
+        return ResponseEntity.ok(projectService.getFileTree(projectId));
     }
 }

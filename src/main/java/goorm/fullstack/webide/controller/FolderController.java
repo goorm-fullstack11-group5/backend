@@ -2,7 +2,6 @@ package goorm.fullstack.webide.controller;
 
 import goorm.fullstack.webide.domain.File;
 import goorm.fullstack.webide.dto.FileResponseDto;
-import goorm.fullstack.webide.dto.FileTreeNodeDto;
 import goorm.fullstack.webide.dto.FolderRenameRequestDto;
 import goorm.fullstack.webide.dto.FolderRequestDto;
 import goorm.fullstack.webide.service.FolderService;
@@ -11,8 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/projects/{projectId}/folders")
@@ -43,10 +40,5 @@ public class FolderController {
         folderService.deleteFolder(id);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-    }
-
-    @GetMapping
-    public ResponseEntity<FileTreeNodeDto> getFileTree(@PathVariable("projectId") int projectId) {
-        return ResponseEntity.ok(folderService.getFileTree(projectId));
     }
 }

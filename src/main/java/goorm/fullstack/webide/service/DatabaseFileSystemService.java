@@ -46,15 +46,6 @@ public class DatabaseFileSystemService implements FileSystemService {
     }
 
     @Override
-    public FileTreeNodeDto getFileTree(int projectId) {
-        // todo: 파일 트리를 반환하도록 구현
-        Project project = projectRepository.findById(projectId)
-            .orElseThrow(EntityNotFoundException::new);
-        File rootFolder = project.getRootFolder();
-        return new FileTreeNodeDto(rootFolder);
-    }
-
-    @Override
     public File createFile(FileRequestDto fileRequestDto) {
         File parentFolder = fileJpaRepository.findById(fileRequestDto.parentFolderId()).orElse(null);
 

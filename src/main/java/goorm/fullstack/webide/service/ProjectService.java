@@ -2,12 +2,12 @@ package goorm.fullstack.webide.service;
 
 import goorm.fullstack.webide.domain.File;
 import goorm.fullstack.webide.domain.Project;
+import goorm.fullstack.webide.dto.FileTreeNodeDto;
 import goorm.fullstack.webide.dto.ProjectRequestDto;
 import goorm.fullstack.webide.dto.ProjectResponseDto;
 import goorm.fullstack.webide.repository.FileJpaRepository;
 import goorm.fullstack.webide.repository.ProjectRepository;
 import jakarta.persistence.EntityNotFoundException;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -52,5 +52,13 @@ public class ProjectService {
 
     private Project getProject(Integer id) {
         return projectRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+    }
+
+    public FileTreeNodeDto getFileTree(int projectId) {
+        // todo: 파일 트리를 반환하도록 구현
+        Project project = projectRepository.findById(projectId)
+            .orElseThrow(EntityNotFoundException::new);
+        File rootFolder = project.getRootFolder();
+        return new FileTreeNodeDto(rootFolder);
     }
 }
