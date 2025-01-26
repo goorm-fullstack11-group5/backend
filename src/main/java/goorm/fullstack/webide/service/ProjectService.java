@@ -21,13 +21,13 @@ public class ProjectService {
     private final ProjectRepository projectRepository;
     private final FileJpaRepository fileJpaRepository;
 
-    public List<ProjectResponseDto> getAllByUser(UserDetails userDetails) {
+    public List<Project> getAllByUser(UserDetails userDetails) {
         // todo: 테스트를 위해 테이블에 저장된 전체 프로젝트를 반환하도록 설정함.
         //       회원가입 기능이 구현된다면 특정 유저의 프로젝트를 반환하도록 설정해야함.
-        return projectRepository.findAll().stream().map(Project::toDto).toList();
+        return projectRepository.findAll();
     }
 
-    public ProjectResponseDto create(ProjectRequestDto projectRequestDto) {
+    public Project create(ProjectRequestDto projectRequestDto) {
         File rootFolder = File
             .builder()
             .name(projectRequestDto.name())
@@ -41,21 +41,15 @@ public class ProjectService {
             .build();
         projectRepository.save(project);
 
-        return project.toDto();
+        return project;
     }
 
     public void delete(Integer id) {
-        Project project = getProject(id);
-        // todo: 프로젝트와 연관된 모든 파일, 폴더를 제거해야함.
+        Project project = projectRepository.findById(id).orElseThrow(EntityNotFoundException::new);
         projectRepository.delete(project);
     }
 
-    private Project getProject(Integer id) {
-        return projectRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-    }
-
     public FileTreeNodeDto getFileTree(int projectId) {
-        // todo: 파일 트리를 반환하도록 구현
         Project project = projectRepository.findById(projectId)
             .orElseThrow(EntityNotFoundException::new);
         File rootFolder = project.getRootFolder();
