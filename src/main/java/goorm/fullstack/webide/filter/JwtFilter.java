@@ -10,6 +10,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -34,7 +35,12 @@ public class JwtFilter extends OncePerRequestFilter {
 
         String token = header.substring(7);
         String username = jwtService.getUsername(token);
-        User user = userService.findByUsername(username).orElseThrow(EntityNotFoundException::new);
+        Optional<User> maybeUser = userService.findByUsername(username);
+        if (maybeUser.isEmpty()) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+        User user = maybeUser.get();
         SecurityContextHolder.getContext()
             .setAuthentication(new UsernamePasswordAuthenticationToken(
                 user.getUserId(), user.getPassword()));
