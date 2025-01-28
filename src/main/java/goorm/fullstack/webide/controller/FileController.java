@@ -2,8 +2,7 @@ package goorm.fullstack.webide.controller;
 
 import goorm.fullstack.webide.domain.File;
 import goorm.fullstack.webide.dto.CodeResultDto;
-import goorm.fullstack.webide.dto.FileContentRequestDto;
-import goorm.fullstack.webide.dto.FileNameRequestDto;
+import goorm.fullstack.webide.dto.FileUpdateRequestDto;
 import goorm.fullstack.webide.dto.FileRequestDto;
 import goorm.fullstack.webide.dto.FileResponseDto;
 import goorm.fullstack.webide.service.FileService;
@@ -41,17 +40,11 @@ public class FileController {
         fileService.deleteFile(id);
     }
 
-    @PostMapping("/{fileId}/content")
-    public ResponseEntity<FileResponseDto> updateFileContent(@PathVariable("fileId") int id,
-        @RequestBody FileContentRequestDto fileContentRequestDto) {
+    @PatchMapping("/{fileId}")
+    public ResponseEntity<FileResponseDto> updateFile(@PathVariable("fileId") int id,
+        @RequestBody FileUpdateRequestDto fileUpdateRequestDto) {
         return ResponseEntity.ok(
-            fileService.updateFileContent(id, fileContentRequestDto.content()).toDto());
-    }
-
-    @PostMapping("/{fileId}/name")
-    public ResponseEntity<FileResponseDto> updateFileName(@PathVariable("fileId") int id,
-        @RequestBody FileNameRequestDto fileNameRequestDto) {
-        return ResponseEntity.ok(fileService.renameFile(id, fileNameRequestDto.name()).toDto());
+            fileService.updateFile(id, fileUpdateRequestDto).toDto());
     }
 
     @PostMapping("/{fileId}/run")

@@ -71,18 +71,18 @@ public class DatabaseFileSystemService implements FileSystemService {
     }
 
     @Override
-    public File updateFileContent(int id, String newContent) {
+    public File updateFile(int id, FileUpdateRequestDto fileUpdateRequestDto) {
         File file = fileJpaRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        String newName = fileUpdateRequestDto.name();
+        String newContent = fileUpdateRequestDto.content();
 
-        file.updateContent(newContent);
-        return fileJpaRepository.save(file);
-    }
+        if (newName != null) {
+            file.rename(newName);
+        }
+        if (newContent != null) {
+            file.updateContent(newContent);
+        }
 
-    @Override
-    public File renameFile(int id, String newName) {
-        File file = fileJpaRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-
-        file.rename(newName);
         return fileJpaRepository.save(file);
     }
 

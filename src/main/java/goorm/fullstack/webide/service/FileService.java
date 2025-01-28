@@ -14,9 +14,7 @@ public interface FileService {
 
     File readFileContent(int id);
 
-    File updateFileContent(int id, String newContent);
-
-    File renameFile(int id, String newName);
+    File updateFile(int id, FileUpdateRequestDto fileUpdateRequestDto);
 
     String runFile(int id);
 }
