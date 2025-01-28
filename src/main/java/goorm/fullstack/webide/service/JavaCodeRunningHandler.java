@@ -23,25 +23,29 @@ import javax.tools.ToolProvider;
  * 1. 코드를 자바 파일로 만든다.
  * 2. 자바 파일을 컴파일 한다.
  * 3. 컴파일로 생성된 클래스 코드에서 함수를 찾아 실행한다.
+ * 4. Stream을 이용하여 출력된 결과를 응답으로 전달한다.
  */
 public class JavaCodeRunningHandler implements CodeRunningHandler {
 
-    private final JavaCompiler javaCompiler = ToolProvider.getSystemJavaCompiler();
+    private final JavaCompiler javaCompiler;
+    private final StandardJavaFileManager fileManager;
+
+    public JavaCodeRunningHandler() {
+        this.javaCompiler = ToolProvider.getSystemJavaCompiler();
+        this.fileManager = javaCompiler.getStandardFileManager(null, null, null);
+    }
 
     @Override
     public String run(String code) {
         String className = extractClassName(code);
-        System.out.println("Detected class name: " + className);
-
-        // 3. 코드 저장
         String fileName = className + ".java";
+
         File sourceFile = new File(fileName);
         try (FileWriter writer = new FileWriter(sourceFile)) {
             writer.write(code);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        StandardJavaFileManager fileManager = javaCompiler.getStandardFileManager(null, null, null);
 
         Iterable<? extends JavaFileObject> compilationUnits = fileManager.getJavaFileObjectsFromFiles(
             List.of(sourceFile));
@@ -96,8 +100,7 @@ public class JavaCodeRunningHandler implements CodeRunningHandler {
         sourceFile.delete();
         new File(className + ".class").delete();
 
-        return executionResult
-            ;
+        return executionResult;
     }
 
     private String extractClassName(String code) {
