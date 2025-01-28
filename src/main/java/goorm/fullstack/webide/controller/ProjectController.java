@@ -8,6 +8,8 @@ import goorm.fullstack.webide.service.ProjectService;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,6 +23,7 @@ public class ProjectController {
 
     @GetMapping
     public ResponseEntity<List<ProjectResponseDto>> getAllProject() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return ResponseEntity.ok(
             projectService.getAllByUser(null).stream().map(Project::toDto).toList());
     }
