@@ -3,10 +3,6 @@ package goorm.fullstack.webide.domain;
 import goorm.fullstack.webide.dto.ProjectResponseDto;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -22,14 +18,13 @@ public class Project extends BaseTimeEntity {
     @Column
     private String detail;
     @JoinColumn
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     private File rootFolder;
+    @JoinColumn(name = "user_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User user;
 
     public ProjectResponseDto toDto() {
         return new ProjectResponseDto(id, name, detail, createdAt, updatedAt);
-    }
-
-    public void updateRootFolder(File rootFolder) {
-        this.rootFolder = rootFolder;
     }
 }

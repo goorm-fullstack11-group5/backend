@@ -1,6 +1,6 @@
 package goorm.fullstack.webide.controller;
 
-import goorm.fullstack.webide.annotation.Authentication;
+import goorm.fullstack.webide.annotation.Login;
 import goorm.fullstack.webide.domain.User;
 import goorm.fullstack.webide.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ public class AuthenticationTokenArgumentResolver implements HandlerMethodArgumen
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
-        return parameter.hasParameterAnnotation(Authentication.class) && User.class.isAssignableFrom(
+        return parameter.hasParameterAnnotation(Login.class) && User.class.isAssignableFrom(
             parameter.getParameterType());
     }
 
