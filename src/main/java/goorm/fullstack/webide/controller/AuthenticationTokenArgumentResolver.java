@@ -27,7 +27,6 @@ public class AuthenticationTokenArgumentResolver implements HandlerMethodArgumen
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
         NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
-        int userId = (int) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return userRepository.findById(userId).orElse(null);
+        return SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 }
