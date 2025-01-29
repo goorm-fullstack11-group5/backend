@@ -10,6 +10,7 @@ import goorm.fullstack.webide.service.ProjectService;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -38,11 +39,11 @@ public class ProjectController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("@projectService.hasProject(#id)")
     public ResponseEntity<Void> deleteProject(@PathVariable("id") Integer id) {
         projectService.delete(id);
         return ResponseEntity.noContent().build();
     }
-
 
     @GetMapping("/{id}")
     public ResponseEntity<FileTreeNodeDto> getFileTree(@PathVariable("id") int projectId) {

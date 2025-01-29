@@ -9,6 +9,8 @@ import goorm.fullstack.webide.repository.FileJpaRepository;
 import goorm.fullstack.webide.repository.ProjectRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -52,5 +54,11 @@ public class ProjectService {
             .orElseThrow(EntityNotFoundException::new);
         File rootFolder = project.getRootFolder();
         return new FileTreeNodeDto(rootFolder);
+    }
+
+    public boolean hasProject(int projectId) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Project project = projectRepository.findById(projectId).orElseThrow(EntityNotFoundException::new);
+        return project.getUser().getUserId() == user.getUserId();
     }
 }
