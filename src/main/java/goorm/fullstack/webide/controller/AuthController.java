@@ -5,6 +5,7 @@ import goorm.fullstack.webide.domain.User;
 import goorm.fullstack.webide.service.UserService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -63,5 +64,23 @@ public class AuthController {
                     errorResponse.put("error", "아이디 및 비밀번호 오류");
                     return ResponseEntity.status(401).body(errorResponse);
                 });
+    }
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletRequest request) {
+        String authorizationHeader = request.getHeader("Authorization");
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(400).body("JWT 토큰이 필요합니다.");
+        }
+
+        String token = authorizationHeader.substring(7); // "Bearer " 제거
+        String username = Jwts.parser()
+                .setSigningKey(jwtConfig.getSecretKey())
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
+
+        Map<String, String> response = new HashMap<>();
+        response.put("message", username + "님이 로그아웃되었습니다.");
+        return ResponseEntity.ok(response);
     }
 }

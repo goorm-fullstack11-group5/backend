@@ -6,7 +6,6 @@ import goorm.fullstack.webide.dto.*;
 import goorm.fullstack.webide.repository.FileJpaRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 @RequiredArgsConstructor
 public class DatabaseFileSystemService implements FileSystemService {
@@ -17,11 +16,6 @@ public class DatabaseFileSystemService implements FileSystemService {
     @Override
     public File createFolder(FolderRequestDto folderRequestDto) {
         File parentFolder = fileJpaRepository.findById(folderRequestDto.parentId()).orElse(null);
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (parentFolder.getUser().getUserId() != user.getUserId()) {
-            throw new EntityNotFoundException();
-        }
-
         File folder = File.builder().name(folderRequestDto.name()).parent(parentFolder).build();
         fileJpaRepository.save(folder);
 
