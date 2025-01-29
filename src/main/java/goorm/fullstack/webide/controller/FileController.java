@@ -38,8 +38,9 @@ public class FileController {
 
     @DeleteMapping("/{fileId}")
     @PreAuthorize("@fileService.isOwner(#id)")
-    public void deleteFile(@PathVariable("fileId") int id) {
+    public ResponseEntity<Void> deleteFile(@PathVariable("fileId") int id) {
         fileService.deleteFile(id);
+        return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/{fileId}")
