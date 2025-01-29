@@ -34,9 +34,10 @@ public class ProjectService {
         fileJpaRepository.save(rootFolder);
 
         Project project = Project.builder()
+            .user(user)
             .name(projectRequestDto.name())
             .detail(projectRequestDto.detail())
-            .user(user)
+            .language(projectRequestDto.language())
             .rootFolder(rootFolder)
             .build();
         projectRepository.save(project);

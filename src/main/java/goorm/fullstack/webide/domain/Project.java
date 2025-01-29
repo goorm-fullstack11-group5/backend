@@ -17,6 +17,8 @@ public class Project extends BaseTimeEntity {
     private String name;
     @Column
     private String detail;
+    @Column
+    private String language;
     @JoinColumn
     @OneToOne(fetch = FetchType.LAZY)
     private File rootFolder;
@@ -25,6 +27,6 @@ public class Project extends BaseTimeEntity {
     private User user;
 
     public ProjectResponseDto toDto() {
-        return new ProjectResponseDto(id, name, detail, createdAt, updatedAt);
+        return new ProjectResponseDto(id, name, detail, language, createdAt, updatedAt);
     }
 }
