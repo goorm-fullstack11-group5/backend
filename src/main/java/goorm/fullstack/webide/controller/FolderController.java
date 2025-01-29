@@ -20,6 +20,7 @@ public class FolderController {
     private final FolderService folderService;
 
     @PostMapping
+    @PreAuthorize("@projectService.isOwner(#projectId)")
     public ResponseEntity<FileResponseDto> createFolder(@PathVariable("projectId") int projectId,
         @RequestBody FolderRequestDto folderRequestDto) {
         File folder = folderService.createFolder(folderRequestDto);
@@ -29,8 +30,10 @@ public class FolderController {
     }
 
     @PatchMapping("/{folderId}")
-    @PreAuthorize("@folderService.isOwner(#id)")
-    public ResponseEntity<FileResponseDto> renameFolder(@PathVariable("folderId") int id,
+    @PreAuthorize("@projectService.isOwner(#projectId) && @folderService.isOwner(#id)")
+    public ResponseEntity<FileResponseDto> renameFolder(
+        @PathVariable("projectId") int projectId,
+        @PathVariable("folderId") int id,
         @RequestBody FolderRenameRequestDto folderRenameRequestDto) {
         File renamedFolder = folderService.renameFolder(id, folderRenameRequestDto);
 
@@ -38,8 +41,10 @@ public class FolderController {
     }
 
     @DeleteMapping("/{folderId}")
-    @PreAuthorize("@folderService.isOwner(#id)")
-    public ResponseEntity<Void> deleteFolder(@PathVariable("folderId") int id) {
+    @PreAuthorize("@projectService.isOwner(#projectId) && @folderService.isOwner(#id)")
+    public ResponseEntity<Void> deleteFolder(
+        @PathVariable("projectId") int projectId,
+        @PathVariable("folderId") int id) {
         folderService.deleteFolder(id);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
