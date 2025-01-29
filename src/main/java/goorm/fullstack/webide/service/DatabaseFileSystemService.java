@@ -6,6 +6,7 @@ import goorm.fullstack.webide.dto.*;
 import goorm.fullstack.webide.repository.FileJpaRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @RequiredArgsConstructor
 public class DatabaseFileSystemService implements FileSystemService {
