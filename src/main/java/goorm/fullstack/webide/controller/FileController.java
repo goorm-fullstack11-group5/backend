@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
  * todo: 경로 변수로 주어진 projectId가 가리키는 Project가 해당 사용자의 소유인지 검증하는 로직 필요
  */
 @RestController
-@RequestMapping("/projects/{projectId}/files")
+@RequestMapping("/api/projects/{projectId}/files")
 @RequiredArgsConstructor
 public class FileController {
 

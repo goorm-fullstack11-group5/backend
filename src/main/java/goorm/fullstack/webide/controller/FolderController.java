@@ -13,7 +13,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/projects/{projectId}/folders")
+@RequestMapping("/api/projects/{projectId}/folders")
 @RequiredArgsConstructor
 public class FolderController {
 
