@@ -17,7 +17,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ProjectService {
+public class ProjectService implements OwnableValidation {
 
     private final ProjectRepository projectRepository;
     private final FileJpaRepository fileJpaRepository;
@@ -57,9 +57,10 @@ public class ProjectService {
         return new FileTreeNodeDto(rootFolder);
     }
 
-    public boolean hasProject(int projectId) {
+    @Override
+    public boolean isOwner(int resourceId) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Project project = projectRepository.findById(projectId).orElseThrow(EntityNotFoundException::new);
+        Project project = projectRepository.findById(resourceId).orElseThrow(EntityNotFoundException::new);
         return project.getUser().getUserId() == user.getUserId();
     }
 }

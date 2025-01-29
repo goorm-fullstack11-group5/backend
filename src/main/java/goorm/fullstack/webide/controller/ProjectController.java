@@ -39,7 +39,7 @@ public class ProjectController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("@projectService.hasProject(#id)")
+    @PreAuthorize("@projectService.isOwner(#id)")
     public ResponseEntity<Void> deleteProject(@PathVariable("id") Integer id) {
         projectService.delete(id);
         return ResponseEntity.noContent().build();

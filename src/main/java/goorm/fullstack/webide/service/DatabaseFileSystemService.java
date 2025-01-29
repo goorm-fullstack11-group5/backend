@@ -17,6 +17,11 @@ public class DatabaseFileSystemService implements FileSystemService {
     @Override
     public File createFolder(FolderRequestDto folderRequestDto) {
         File parentFolder = fileJpaRepository.findById(folderRequestDto.parentId()).orElse(null);
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (parentFolder.getUser().getUserId() != user.getUserId()) {
+            throw new EntityNotFoundException();
+        }
+
         File folder = File.builder().name(folderRequestDto.name()).parent(parentFolder).build();
         fileJpaRepository.save(folder);
 
