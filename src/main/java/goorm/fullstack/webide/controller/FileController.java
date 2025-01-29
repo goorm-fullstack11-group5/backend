@@ -9,6 +9,7 @@ import goorm.fullstack.webide.service.FileService;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -36,11 +37,13 @@ public class FileController {
     }
 
     @DeleteMapping("/{fileId}")
+    @PreAuthorize("@fileService.isOwner(#id)")
     public void deleteFile(@PathVariable("fileId") int id) {
         fileService.deleteFile(id);
     }
 
     @PatchMapping("/{fileId}")
+    @PreAuthorize("@fileService.isOwner(#id)")
     public ResponseEntity<FileResponseDto> updateFile(@PathVariable("fileId") int id,
         @RequestBody FileUpdateRequestDto fileUpdateRequestDto) {
         return ResponseEntity.ok(
@@ -48,6 +51,7 @@ public class FileController {
     }
 
     @PostMapping("/{fileId}/run")
+    @PreAuthorize("@fileService.isOwner(#id)")
     public ResponseEntity<CodeResultDto> runCode(@PathVariable("fileId") int id) {
         return ResponseEntity.ok(new CodeResultDto(fileService.runFile(id)));
     }

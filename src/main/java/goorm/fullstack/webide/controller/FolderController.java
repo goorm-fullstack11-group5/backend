@@ -9,6 +9,7 @@ import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -28,6 +29,7 @@ public class FolderController {
     }
 
     @PatchMapping("/{folderId}")
+    @PreAuthorize("@folderService.isOwner(#id)")
     public ResponseEntity<FileResponseDto> renameFolder(@PathVariable("folderId") int id,
         @RequestBody FolderRenameRequestDto folderRenameRequestDto) {
         File renamedFolder = folderService.renameFolder(id, folderRenameRequestDto);
@@ -36,6 +38,7 @@ public class FolderController {
     }
 
     @DeleteMapping("/{folderId}")
+    @PreAuthorize("@folderService.isOwner(#id)")
     public ResponseEntity<Void> deleteFolder(@PathVariable("folderId") int id) {
         folderService.deleteFolder(id);
 

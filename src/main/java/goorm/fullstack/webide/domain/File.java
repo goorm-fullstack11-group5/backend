@@ -33,14 +33,11 @@ public class File extends BaseTimeEntity {
     private String name;
     @Column
     private String content;
+    @JoinColumn(name="user_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User user;
     @Column
-    private Boolean isFolder;
-    @Column
-    @OneToMany(
-        mappedBy = "parent",
-        cascade = CascadeType.REMOVE,
-        orphanRemoval = true,
-        fetch = FetchType.EAGER) // todo: EAGER로 설정했을 때 성능 손실이 있는지?
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<File> files;
     @JoinColumn
     @ManyToOne(fetch = FetchType.LAZY)
@@ -48,10 +45,6 @@ public class File extends BaseTimeEntity {
 
     public FileResponseDto toDto() {
         return new FileResponseDto(id, name, content, createdAt, updatedAt);
-    }
-
-    public boolean isFolder() {
-        return isFolder;
     }
 
     public void rename(String name) {
