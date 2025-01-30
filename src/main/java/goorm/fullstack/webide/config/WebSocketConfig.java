@@ -13,8 +13,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/chat")     // WebSocket 접속 엔드포인트를 /chat으로 설정
-                .setAllowedOrigins("*")   // 모든 도메인에서의 접근을 허용 (CORS 설정)
-                .withSockJS();
+                .setAllowedOrigins("*");   // 모든 도메인에서의 접근을 허용 (CORS 설정)
     }
 
     @Override
