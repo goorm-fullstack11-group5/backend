@@ -2,9 +2,11 @@ package goorm.fullstack.webide.controller;
 
 import goorm.fullstack.webide.domain.File;
 import goorm.fullstack.webide.dto.CodeResultDto;
+import goorm.fullstack.webide.dto.FileMoveRequestDto;
 import goorm.fullstack.webide.dto.FileUpdateRequestDto;
 import goorm.fullstack.webide.dto.FileRequestDto;
 import goorm.fullstack.webide.dto.FileResponseDto;
+import goorm.fullstack.webide.dto.FolderMoveRequestDto;
 import goorm.fullstack.webide.service.FileService;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
@@ -66,5 +68,15 @@ public class FileController {
         @PathVariable("projectId") int projectId,
         @PathVariable("fileId") int id) {
         return ResponseEntity.ok(new CodeResultDto(fileService.runFile(id)));
+    }
+
+    @PatchMapping("/{fileId}/move")
+    @PreAuthorize("@projectService.isOwner(#projectId) && @fileService.isOwner(#fileId) && @folderService.isOwner(#fileMoveRequestDto.parentFolderId())")
+    public ResponseEntity<Void> moveFolder(
+        @PathVariable("projectId") int projectId,
+        @PathVariable("fileId") int fileId,
+        @RequestBody FileMoveRequestDto fileMoveRequestDto) {
+        fileService.moveFile(fileId, fileMoveRequestDto);
+        return ResponseEntity.noContent().build();
     }
 }

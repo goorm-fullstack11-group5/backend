@@ -46,6 +46,29 @@ public class DatabaseFileSystemService implements FileSystemService {
     }
 
     @Override
+    public void moveFolder(int id, FolderMoveRequestDto folderMoveRequestDto) {
+        int parentId = folderMoveRequestDto.parentFolderId();
+        if (parentId == id) {
+            return;
+        }
+
+        File parentFolder = fileJpaRepository.findById(parentId).orElseThrow(EntityNotFoundException::new);
+        File targetFolder = fileJpaRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+
+        // 이동시키려는 폴더(targetFolder)가 목적지(parentFolder)를 하위 폴더로 갖는 경우는 이동이 불가능하게 해야함.
+        File iter = parentFolder;
+        while(iter.getParent() != null) {
+            if (iter == targetFolder) {
+                return;
+            }
+            iter = iter.getParent();
+        }
+        targetFolder.moveTo(parentFolder);
+
+        fileJpaRepository.save(targetFolder);
+    }
+
+    @Override
     public File createFile(FileRequestDto fileRequestDto) {
         File parentFolder = fileJpaRepository.findById(fileRequestDto.parentFolderId())
             .orElse(null);
@@ -91,6 +114,16 @@ public class DatabaseFileSystemService implements FileSystemService {
     public String runFile(int id) {
         File file = fileJpaRepository.findById(id).orElseThrow(EntityNotFoundException::new);
         return codeRunner.run(file);
+    }
+
+    @Override
+    public void moveFile(int id, FileMoveRequestDto fileMoveRequestDto) {
+        int parentFolderIdId = fileMoveRequestDto.parentFolderId();
+        File parentFolder = fileJpaRepository.findById(parentFolderIdId).orElseThrow(EntityNotFoundException::new);
+        File targetFile  = fileJpaRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        targetFile.moveTo(parentFolder);
+
+        fileJpaRepository.save(targetFile);
     }
 
     @Override

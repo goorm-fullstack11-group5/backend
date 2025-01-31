@@ -56,4 +56,8 @@ public class File extends BaseTimeEntity {
     public void updateContent(String newContent) {
         this.content = newContent;
     }
+
+    public void moveTo(File parent) {
+        this.parent = parent;
+    }
 }
