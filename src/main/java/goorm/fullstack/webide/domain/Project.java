@@ -20,7 +20,7 @@ public class Project extends BaseTimeEntity {
     @Column
     private String language;
     @JoinColumn
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private File rootFolder;
     @JoinColumn(name = "user_id")
     @ManyToOne(fetch = FetchType.LAZY)

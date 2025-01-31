@@ -17,7 +17,12 @@ public class DatabaseFileSystemService implements FileSystemService {
     @Override
     public File createFolder(FolderRequestDto folderRequestDto) {
         File parentFolder = fileJpaRepository.findById(folderRequestDto.parentId()).orElse(null);
-        File folder = File.builder().name(folderRequestDto.name()).parent(parentFolder).build();
+        File folder = File
+            .builder()
+            .name(folderRequestDto.name())
+            .parent(parentFolder)
+            .isFolder(true)
+            .build();
         fileJpaRepository.save(folder);
 
         // todo: ModelMapper는 Pojo -> Record를 지원하지 못함
@@ -41,11 +46,38 @@ public class DatabaseFileSystemService implements FileSystemService {
     }
 
     @Override
+    public void moveFolder(int id, FolderMoveRequestDto folderMoveRequestDto) {
+        int parentId = folderMoveRequestDto.parentFolderId();
+        if (parentId == id) {
+            return;
+        }
+
+        File parentFolder = fileJpaRepository.findById(parentId).orElseThrow(EntityNotFoundException::new);
+        File targetFolder = fileJpaRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+
+        // 이동시키려는 폴더(targetFolder)가 목적지(parentFolder)를 하위 폴더로 갖는 경우는 이동이 불가능하게 해야함.
+        File iter = parentFolder;
+        while(iter.getParent() != null) {
+            if (iter == targetFolder) {
+                return;
+            }
+            iter = iter.getParent();
+        }
+        targetFolder.moveTo(parentFolder);
+
+        fileJpaRepository.save(targetFolder);
+    }
+
+    @Override
     public File createFile(FileRequestDto fileRequestDto) {
         File parentFolder = fileJpaRepository.findById(fileRequestDto.parentFolderId())
             .orElse(null);
 
-        File file = File.builder().name(fileRequestDto.name()).content(fileRequestDto.content())
+        File file = File
+            .builder()
+            .name(fileRequestDto.name())
+            .content(fileRequestDto.content())
+            .isFolder(false)
             .parent(parentFolder).build();
 
         return fileJpaRepository.save(file);
@@ -80,9 +112,18 @@ public class DatabaseFileSystemService implements FileSystemService {
 
     @Override
     public String runFile(int id) {
-        // todo: 파일 실행 후 결과를 반환하도록 구현
         File file = fileJpaRepository.findById(id).orElseThrow(EntityNotFoundException::new);
         return codeRunner.run(file);
+    }
+
+    @Override
+    public void moveFile(int id, FileMoveRequestDto fileMoveRequestDto) {
+        int parentFolderIdId = fileMoveRequestDto.parentFolderId();
+        File parentFolder = fileJpaRepository.findById(parentFolderIdId).orElseThrow(EntityNotFoundException::new);
+        File targetFile  = fileJpaRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        targetFile.moveTo(parentFolder);
+
+        fileJpaRepository.save(targetFile);
     }
 
     @Override
