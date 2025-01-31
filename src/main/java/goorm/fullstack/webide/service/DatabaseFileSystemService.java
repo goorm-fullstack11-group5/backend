@@ -17,7 +17,12 @@ public class DatabaseFileSystemService implements FileSystemService {
     @Override
     public File createFolder(FolderRequestDto folderRequestDto) {
         File parentFolder = fileJpaRepository.findById(folderRequestDto.parentId()).orElse(null);
-        File folder = File.builder().name(folderRequestDto.name()).parent(parentFolder).build();
+        File folder = File
+            .builder()
+            .name(folderRequestDto.name())
+            .parent(parentFolder)
+            .isFolder(true)
+            .build();
         fileJpaRepository.save(folder);
 
         // todo: ModelMapper는 Pojo -> Record를 지원하지 못함
@@ -45,7 +50,11 @@ public class DatabaseFileSystemService implements FileSystemService {
         File parentFolder = fileJpaRepository.findById(fileRequestDto.parentFolderId())
             .orElse(null);
 
-        File file = File.builder().name(fileRequestDto.name()).content(fileRequestDto.content())
+        File file = File
+            .builder()
+            .name(fileRequestDto.name())
+            .content(fileRequestDto.content())
+            .isFolder(false)
             .parent(parentFolder).build();
 
         return fileJpaRepository.save(file);
@@ -80,7 +89,6 @@ public class DatabaseFileSystemService implements FileSystemService {
 
     @Override
     public String runFile(int id) {
-        // todo: 파일 실행 후 결과를 반환하도록 구현
         File file = fileJpaRepository.findById(id).orElseThrow(EntityNotFoundException::new);
         return codeRunner.run(file);
     }

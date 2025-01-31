@@ -33,6 +33,8 @@ public class File extends BaseTimeEntity {
     private String name;
     @Column
     private String content;
+    @Column
+    private Boolean isFolder;
     @JoinColumn(name="user_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
@@ -44,7 +46,7 @@ public class File extends BaseTimeEntity {
     private File parent;
 
     public FileResponseDto toDto() {
-        return new FileResponseDto(id, name, content, createdAt, updatedAt);
+        return new FileResponseDto(id, name, isFolder, content, createdAt, updatedAt);
     }
 
     public void rename(String name) {
