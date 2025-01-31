@@ -1,4 +1,4 @@
-package goorm.fullstack.webide.service;
+package goorm.fullstack.webide.execution;
 
 import goorm.fullstack.webide.domain.File;
 import org.springframework.stereotype.Component;
@@ -7,10 +7,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class CodeRunner {
+public class CodeRunningHandlerMapper {
     private final Map<String, CodeRunningHandler> codeRunningHandlerMap = new HashMap<>();
 
-    public CodeRunner() {
+    public CodeRunningHandlerMapper() {
         // todo: 확장자에 따라서 CodeRunningHandler 등록
         this.codeRunningHandlerMap.put("java", new JavaCodeRunningHandler());
     }
@@ -21,7 +21,7 @@ public class CodeRunner {
         for (Map.Entry<String, CodeRunningHandler> entry : codeRunningHandlerMap.entrySet()) {
             if (entry.getKey().equals(fileExtension)) {
                 String code = file.getContent();
-                return entry.getValue().run(code);
+                return entry.getValue().run(file);
             }
         }
         return "";

@@ -1,5 +1,6 @@
 package goorm.fullstack.webide.service;
 
+import goorm.fullstack.webide.execution.CodeRunningHandlerMapper;
 import goorm.fullstack.webide.domain.File;
 import goorm.fullstack.webide.domain.User;
 import goorm.fullstack.webide.dto.*;
@@ -12,7 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 public class DatabaseFileSystemService implements FileSystemService {
 
     private final FileJpaRepository fileJpaRepository;
-    private final CodeRunner codeRunner;
+    private final CodeRunningHandlerMapper codeRunningHandlerMapper;
 
     @Override
     public File createFolder(FolderRequestDto folderRequestDto) {
@@ -113,7 +114,7 @@ public class DatabaseFileSystemService implements FileSystemService {
     @Override
     public String runFile(int id) {
         File file = fileJpaRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-        return codeRunner.run(file);
+        return codeRunningHandlerMapper.run(file);
     }
 
     @Override
