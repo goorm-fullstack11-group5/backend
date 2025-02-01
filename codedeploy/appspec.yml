@@ -3,6 +3,11 @@ os: linux
 files:
   - source: /
     destination: /home/ubuntu/deployment
+permissions:
+  - object: /home/ubuntu/deployment
+    pattern: "**"
+    owner: ec2-user
+    group: ec2-user
 
 hooks:
   BeforeInstall:
