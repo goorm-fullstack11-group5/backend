@@ -6,8 +6,8 @@ files:
 permissions:
   - object: /home/ubuntu/deployment
     pattern: "**"
-    owner: ec2-instance-connect
-    group: ec2-instance-connect
+    owner: ubuntu
+    group: ubuntu
 
 hooks:
   BeforeInstall:
