@@ -41,7 +41,7 @@ public class FileController {
         @Login User user,
         @PathVariable("projectId") int projectId,
         @RequestBody FileRequestDto fileRequestDto) {
-        File file = fileService.createFile(user, fileRequestDto);
+        File file = fileService.createFile(user, projectId, fileRequestDto);
         URI uri = URI.create("/projects/" + projectId + "/files/" + file.getId());
         return ResponseEntity.created(uri).body(file.toDto());
     }

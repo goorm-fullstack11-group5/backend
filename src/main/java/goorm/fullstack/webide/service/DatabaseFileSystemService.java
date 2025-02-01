@@ -4,6 +4,7 @@ import goorm.fullstack.webide.domain.File;
 import goorm.fullstack.webide.domain.User;
 import goorm.fullstack.webide.dto.*;
 import goorm.fullstack.webide.repository.FileJpaRepository;
+import goorm.fullstack.webide.repository.ProjectRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -12,11 +13,15 @@ import org.springframework.security.core.context.SecurityContextHolder;
 public class DatabaseFileSystemService implements FileSystemService {
 
     private final FileJpaRepository fileJpaRepository;
+    private final ProjectRepository projectRepository;
     private final CodeRunner codeRunner;
 
     @Override
-    public File createFolder(User user, FolderRequestDto folderRequestDto) {
-        File parentFolder = fileJpaRepository.findById(folderRequestDto.parentId()).orElse(null);
+    public File createFolder(User user, int projectId, FolderRequestDto folderRequestDto) {
+        File parentFolder = fileJpaRepository.findById(folderRequestDto.parentId()).orElse(
+            projectRepository.findById(projectId).orElseThrow(EntityNotFoundException::new)
+                .getRootFolder()
+        );
         File folder = File
             .builder()
             .name(folderRequestDto.name())
@@ -53,12 +58,14 @@ public class DatabaseFileSystemService implements FileSystemService {
             return;
         }
 
-        File parentFolder = fileJpaRepository.findById(parentId).orElseThrow(EntityNotFoundException::new);
-        File targetFolder = fileJpaRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        File parentFolder = fileJpaRepository.findById(parentId)
+            .orElseThrow(EntityNotFoundException::new);
+        File targetFolder = fileJpaRepository.findById(id)
+            .orElseThrow(EntityNotFoundException::new);
 
         // 이동시키려는 폴더(targetFolder)가 목적지(parentFolder)를 하위 폴더로 갖는 경우는 이동이 불가능하게 해야함.
         File iter = parentFolder;
-        while(iter.getParent() != null) {
+        while (iter.getParent() != null) {
             if (iter == targetFolder) {
                 return;
             }
@@ -70,9 +77,11 @@ public class DatabaseFileSystemService implements FileSystemService {
     }
 
     @Override
-    public File createFile(User user, FileRequestDto fileRequestDto) {
-        File parentFolder = fileJpaRepository.findById(fileRequestDto.parentFolderId())
-            .orElse(null);
+    public File createFile(User user, int projectId, FileRequestDto fileRequestDto) {
+        File parentFolder = fileJpaRepository.findById(fileRequestDto.parentFolderId()).orElse(
+            projectRepository.findById(projectId).orElseThrow(EntityNotFoundException::new)
+                .getRootFolder()
+        );
 
         File file = File
             .builder()
@@ -121,8 +130,9 @@ public class DatabaseFileSystemService implements FileSystemService {
     @Override
     public void moveFile(int id, FileMoveRequestDto fileMoveRequestDto) {
         int parentFolderIdId = fileMoveRequestDto.parentFolderId();
-        File parentFolder = fileJpaRepository.findById(parentFolderIdId).orElseThrow(EntityNotFoundException::new);
-        File targetFile  = fileJpaRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        File parentFolder = fileJpaRepository.findById(parentFolderIdId)
+            .orElseThrow(EntityNotFoundException::new);
+        File targetFile = fileJpaRepository.findById(id).orElseThrow(EntityNotFoundException::new);
         targetFile.moveTo(parentFolder);
 
         fileJpaRepository.save(targetFile);

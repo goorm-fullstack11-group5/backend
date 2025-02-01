@@ -9,7 +9,7 @@ import goorm.fullstack.webide.dto.*;
  */
 public interface FileService extends OwnableValidation {
 
-    File createFile(User user, FileRequestDto fileRequestDto);
+    File createFile(User user, int projectId, FileRequestDto fileRequestDto);
 
     void deleteFile(int id);
 

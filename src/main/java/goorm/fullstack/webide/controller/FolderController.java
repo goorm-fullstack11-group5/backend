@@ -29,7 +29,7 @@ public class FolderController {
         @Login User user,
         @PathVariable("projectId") int projectId,
         @RequestBody FolderRequestDto folderRequestDto) {
-        File folder = folderService.createFolder(user, folderRequestDto);
+        File folder = folderService.createFolder(user, projectId, folderRequestDto);
         URI uri = URI.create("/projects/" + projectId + "/folders/" + folder.getId());
 
         return ResponseEntity.created(uri).body(folder.toDto());

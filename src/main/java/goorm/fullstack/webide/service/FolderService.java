@@ -8,7 +8,7 @@ import goorm.fullstack.webide.dto.FolderRequestDto;
 
 public interface FolderService extends OwnableValidation {
 
-    File createFolder(User user, FolderRequestDto folderRequestDto);
+    File createFolder(User user, int projectId, FolderRequestDto folderRequestDto);
 
     void deleteFolder(int id);
 
