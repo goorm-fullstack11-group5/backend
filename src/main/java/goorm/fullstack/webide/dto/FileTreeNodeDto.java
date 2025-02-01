@@ -16,5 +16,6 @@ public record FileTreeNodeDto(int id, String name, Boolean isFolder,
 
     public void addFileTreeNodeDto(FileTreeNodeDto fileTreeNodeDto) {
         files.add(fileTreeNodeDto);
+
     }
 }
