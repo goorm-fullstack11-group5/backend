@@ -1,13 +1,14 @@
 package goorm.fullstack.webide.service;
 
 import goorm.fullstack.webide.domain.File;
+import goorm.fullstack.webide.domain.User;
 import goorm.fullstack.webide.dto.FolderMoveRequestDto;
 import goorm.fullstack.webide.dto.FolderRenameRequestDto;
 import goorm.fullstack.webide.dto.FolderRequestDto;
 
 public interface FolderService extends OwnableValidation {
 
-    File createFolder(FolderRequestDto folderRequestDto);
+    File createFolder(User user, FolderRequestDto folderRequestDto);
 
     void deleteFolder(int id);
 

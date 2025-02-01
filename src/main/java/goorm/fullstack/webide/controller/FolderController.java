@@ -1,6 +1,8 @@
 package goorm.fullstack.webide.controller;
 
+import goorm.fullstack.webide.annotation.Login;
 import goorm.fullstack.webide.domain.File;
+import goorm.fullstack.webide.domain.User;
 import goorm.fullstack.webide.dto.FileResponseDto;
 import goorm.fullstack.webide.dto.FileTreeNodeDto;
 import goorm.fullstack.webide.dto.FolderMoveRequestDto;
@@ -23,9 +25,11 @@ public class FolderController {
 
     @PostMapping
     @PreAuthorize("@projectService.isOwner(#projectId)")
-    public ResponseEntity<FileResponseDto> createFolder(@PathVariable("projectId") int projectId,
+    public ResponseEntity<FileResponseDto> createFolder(
+        @Login User user,
+        @PathVariable("projectId") int projectId,
         @RequestBody FolderRequestDto folderRequestDto) {
-        File folder = folderService.createFolder(folderRequestDto);
+        File folder = folderService.createFolder(user, folderRequestDto);
         URI uri = URI.create("/projects/" + projectId + "/folders/" + folder.getId());
 
         return ResponseEntity.created(uri).body(folder.toDto());

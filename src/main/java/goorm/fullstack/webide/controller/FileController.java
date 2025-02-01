@@ -1,6 +1,8 @@
 package goorm.fullstack.webide.controller;
 
+import goorm.fullstack.webide.annotation.Login;
 import goorm.fullstack.webide.domain.File;
+import goorm.fullstack.webide.domain.User;
 import goorm.fullstack.webide.dto.CodeResultDto;
 import goorm.fullstack.webide.dto.FileMoveRequestDto;
 import goorm.fullstack.webide.dto.FileUpdateRequestDto;
@@ -36,9 +38,10 @@ public class FileController {
     @PostMapping
     @PreAuthorize("@projectService.isOwner(#projectId)")
     public ResponseEntity<FileResponseDto> createFile(
+        @Login User user,
         @PathVariable("projectId") int projectId,
         @RequestBody FileRequestDto fileRequestDto) {
-        File file = fileService.createFile(fileRequestDto);
+        File file = fileService.createFile(user, fileRequestDto);
         URI uri = URI.create("/projects/" + projectId + "/files/" + file.getId());
         return ResponseEntity.created(uri).body(file.toDto());
     }
