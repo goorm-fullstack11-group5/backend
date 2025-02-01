@@ -1,6 +1,7 @@
 package goorm.fullstack.webide.service;
 
 import goorm.fullstack.webide.domain.File;
+import goorm.fullstack.webide.domain.User;
 import goorm.fullstack.webide.dto.*;
 
 /**
@@ -8,7 +9,7 @@ import goorm.fullstack.webide.dto.*;
  */
 public interface FileService extends OwnableValidation {
 
-    File createFile(FileRequestDto fileRequestDto);
+    File createFile(User user, FileRequestDto fileRequestDto);
 
     void deleteFile(int id);
 

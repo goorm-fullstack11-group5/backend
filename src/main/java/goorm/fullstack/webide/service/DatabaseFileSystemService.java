@@ -15,13 +15,14 @@ public class DatabaseFileSystemService implements FileSystemService {
     private final CodeRunner codeRunner;
 
     @Override
-    public File createFolder(FolderRequestDto folderRequestDto) {
+    public File createFolder(User user, FolderRequestDto folderRequestDto) {
         File parentFolder = fileJpaRepository.findById(folderRequestDto.parentId()).orElse(null);
         File folder = File
             .builder()
             .name(folderRequestDto.name())
             .parent(parentFolder)
             .isFolder(true)
+            .user(user)
             .build();
         fileJpaRepository.save(folder);
 
@@ -69,7 +70,7 @@ public class DatabaseFileSystemService implements FileSystemService {
     }
 
     @Override
-    public File createFile(FileRequestDto fileRequestDto) {
+    public File createFile(User user, FileRequestDto fileRequestDto) {
         File parentFolder = fileJpaRepository.findById(fileRequestDto.parentFolderId())
             .orElse(null);
 
@@ -78,6 +79,7 @@ public class DatabaseFileSystemService implements FileSystemService {
             .name(fileRequestDto.name())
             .content(fileRequestDto.content())
             .isFolder(false)
+            .user(user)
             .parent(parentFolder).build();
 
         return fileJpaRepository.save(file);
