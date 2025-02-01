@@ -15,11 +15,12 @@ import org.springframework.context.annotation.Configuration;
 @RequiredArgsConstructor
 public class FileSystemConfig {
     private final FileJpaRepository fileJpaRepository;
+    private final ProjectRepository projectRepository;
     private final CodeRunner codeRunner;
 
     @Bean
     public FileSystemService fileSystemService() {
-        return new DatabaseFileSystemService(fileJpaRepository, codeRunner);
+        return new DatabaseFileSystemService(fileJpaRepository, projectRepository, codeRunner);
     }
 
     @Bean
