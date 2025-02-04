@@ -3,6 +3,11 @@ os: linux
 files:
   - source: /
     destination: /home/ubuntu/deployment
+permissions:
+  - object: /home/ubuntu
+    pattern: "**"
+    owner: ubuntu
+    group: ubuntu
 
 hooks:
   BeforeInstall:

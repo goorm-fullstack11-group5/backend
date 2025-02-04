@@ -1,6 +1,9 @@
 #!/bin/bash
 
-echo "Granting execute permissions for new application..."
+current_date_time() {
+    date +%Y-%m-%dT%H:%M:%S
+}
+echo "$(current_date_time) Granting execute permissions for new application..." >> /home/ubuntu/log/deploy.log
 chmod +x /home/ubuntu/deployment/*.jar
-
-echo "Deployment preparation complete."
+chmod +x /home/ubuntu/deployment/*.sh
+echo "$(current_date_time) Deployment preparation complete." >> /home/ubuntu/log/deploy.log
